@@ -4,7 +4,7 @@
   <meta charset="UTF-8"/>
   <link rel="icon" type="image/svg+xml" href="/vite.svg"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Testing App</title>
+  <title>Training & Testing App</title>
 </head>
 <body>
 <div id="app">
@@ -29,15 +29,15 @@
     <button id="toggle-video" type="button" disabled>Toggle Video</button>
     <button id="add-to-training-data-button" type="button" disabled>Add to training data</button>
     <button id="train-button" type="button" disabled>Train model ❤️</button>
-    <button id="detect-button" type="button">See if this computer can feel empathy (Detect)</button>
+    <button id="detect-button" type="button">Predict gesture!</button>
     <button id="save-button" type="button" >Save your creation!</button>
     <button id="test-button" type="button">Test your creation!</button>
 
   </div>
 
-  <label for="emotions">Choose an emotion for this computer to learn:</label>
+  <label for="gestures">Choose a gesture for this computer to learn:</label>
 
-  <select name="emotions" id="emotions" style="
+  <select name="gestures" id="gestures" style="
     padding: 8px 12px;
     font-size: 16px;
     border: 1px solid #ccc;
@@ -60,10 +60,6 @@
 
 <script type="module" src="/src/main.js"></script>
 <script src="https://unpkg.com/ml5@1/dist/ml5.min.js"></script>
-<style>
-  #tfjs-visor-container{
-    color: black;
-  }
-</style>
+
 </body>
 </html>

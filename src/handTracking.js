@@ -15,7 +15,7 @@ const detectButton = document.getElementById('detect-button')
 const saveButton = document.getElementById('save-button')
 const testButton = document.getElementById('test-button')
 
-const emotionSelector = document.getElementById('emotions');
+const gestureSelector = document.getElementById('gestures');
 
 let handLandmarks = [];
 
@@ -24,8 +24,18 @@ let testData
 
 // NeuralNetwork init
 ml5.setBackend("webgl");
-const neuralNetwork = ml5.neuralNetwork({task: 'classification', debug: true})
 
+// Layers is hier de hidden layers voor de beoordeling! Extra neurons toevoegen verbeterd de accuracy
+const neuralNetwork = ml5.neuralNetwork({
+    task: 'classification',
+    debug: true,
+    layers: [
+        { type: 'dense', units: 128, activation: 'relu', inputShape: [63] },
+        { type: 'dense', units: 64, activation: 'relu' },
+        { type: 'dense', units: 32, activation: 'relu' },
+        { type: 'dense', units: 5, activation: 'softmax' }
+    ]
+});
 // Camera var
 const camera = new Camera(video, {
     onFrame: async () => {
@@ -56,10 +66,10 @@ testButton.addEventListener('click', () => {
 // add current pose to training data
 addTrainingsDataButton.addEventListener('click', () => {
     trainButton.disabled = false;
-    console.log('adding data:',`${emotionSelector.value}`);
+    console.log('adding data:',`${gestureSelector.value}`);
     console.log(normalizeHandData());
 
-    const key = emotionSelector.value;
+    const key = gestureSelector.value;
     const data = normalizeHandData();
 
     if (!trainingData[key]) {
@@ -70,7 +80,7 @@ addTrainingsDataButton.addEventListener('click', () => {
 
     console.log('trainingsData object:', trainingData);
 
-    neuralNetwork.addData(normalizeHandData(), {label: `${emotionSelector.value}`});
+    neuralNetwork.addData(normalizeHandData(), {label: `${gestureSelector.value}`});
 });
 
 function splitTrainingData(dataObject, trainRatio = 0.8) {
@@ -132,6 +142,9 @@ function finishedTraining() {
 }
 
 async function testTraining(){
+    const trueLabels = [];
+    const predictedLabels = [];
+
     for (const key in testData) {
         if (testData.hasOwnProperty(key)) {
             const samples = testData[key];
@@ -143,15 +156,21 @@ async function testTraining(){
                     current.confidence > prev.confidence ? current : prev
                 ).label;
 
+                trueLabels.push(key);
+                predictedLabels.push(bestPrediction);
+
                 if (bestPrediction === key) {
-                    console.log('correct')
+                    console.log(`✅ Correct: ${key}`);
                 } else {
-                    console.log('incorrect')
+                    console.log(`❌ Incorrect: predicted ${bestPrediction}, expected ${key}`);
                 }
-                //console.log(bestPrediction);
             }
         }
     }
+
+    const allLabels = [...new Set([...trueLabels, ...predictedLabels])];
+
+    generateConfusionMatrix(trueLabels, predictedLabels, allLabels);
 }
 
 // init
@@ -159,7 +178,7 @@ async function init() {
     await camera.start();
     toggleVideoButton.disabled = false;
     addTrainingsDataButton.disabled = false;
-    emotionSelector.disabled = false;
+    gestureSelector.disabled = false;
 }
 
 // ==== Hands Setup ====
@@ -228,3 +247,22 @@ hands.onResults((results) => {
     handLandmarks = results.multiHandLandmarks || [];
     drawLandmarksFunc();
 });
+
+function generateConfusionMatrix(trueLabels, predictedLabels, classLabels) {
+    const matrix = {};
+
+    classLabels.forEach(actual => {
+        matrix[actual] = {};
+        classLabels.forEach(predicted => {
+            matrix[actual][predicted] = 0;
+        });
+    });
+
+    for (let i = 0; i < trueLabels.length; i++) {
+        const actual = trueLabels[i];
+        const predicted = predictedLabels[i];
+        matrix[actual][predicted]++;
+    }
+
+    console.table(matrix);
+}
