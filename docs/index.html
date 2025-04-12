@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <link rel="icon" type="image/svg+xml" href="/nntraining-prg8/vite.svg"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Training & Testing App</title>
+  <script type="module" crossorigin src="/nntraining-prg8/assets/index-B2MYeRT8.js"></script>
+  <link rel="stylesheet" crossorigin href="/nntraining-prg8/assets/index-CIlthLZ1.css">
+</head>
+<body>
+<div id="app">
+  <h1>Train je handen en durf te dromen</h1>
+  <div style="position: relative; width: 640px; height: 480px; margin: 0 auto;">
+    <video id="input_video"
+           autoplay
+           playsinline
+           width="640"
+           height="480"
+           style="position: absolute; top: 0; left: 0; transform: scale(-1, 1); z-index: 0;"></video>
+
+    <canvas id="hand_canvas"
+            width="640"
+            height="480"
+            style="position: absolute; top: 0; left: 0; border:1px solid #ccc; transform: scale(-1, 1); z-index: 1;"></canvas>
+  </div>
+
+
+  <div style="text-align: center; margin-top: 10px; margin-bottom: 10px;">
+    <button id="start-webcam" type="button">Start Tracking</button>
+    <button id="toggle-video" type="button" disabled>Toggle Video</button>
+    <button id="add-to-training-data-button" type="button" disabled>Add to training data</button>
+    <button id="train-button" type="button" disabled>Train model ❤️</button>
+    <button id="detect-button" type="button">Predict gesture!</button>
+    <button id="save-button" type="button" >Save your creation!</button>
+    <button id="test-button" type="button">Test your creation!</button>
+
+  </div>
+
+  <label for="gestures">Choose a gesture for this computer to learn:</label>
+
+  <select name="gestures" id="gestures" style="
+    padding: 8px 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(255, 255, 255, 0.1);
+    background-color: #1a1a1a;
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
+">
+
+    <option value="openHand">open hand✋</option>
+    <option value="fist">fist👊</option>
+    <option value="thumbsUp">ThumbsUp👍</option>
+    <option value="DevilsHorns">DevilsHorns🤟</option>
+    <option value="Peace">Peace✌️</option>
+  </select>
+
+</div>
+
+<script src="https://unpkg.com/ml5@1/dist/ml5.min.js"></script>
+
+</body>
+</html>
